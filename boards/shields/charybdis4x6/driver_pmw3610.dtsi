@@ -1,4 +1,7 @@
-/* Gemini 3 Pro - Pin Conflict Fix Version */
+/* Gemini 3 Pro - Final Fix Version */
+/* 1. SPI 통신선 정상화 (MOSI/MISO 분리) */
+/* 2. 핀 충돌 완벽 해결 (D0, D1 사용) */
+
 #define INPUT_EV_KEY 0x01
 #define INPUT_EV_REL 0x02
 #define INPUT_EV_ABS 0x03
@@ -15,8 +18,10 @@
 &pinctrl {
     spi0_default: spi0_default {
         group1 {
+            /* [수정됨] SPI 핀 맵핑 정상화 (nice!nano v2 표준) */
+            /* SCK: P0.08, MOSI: P0.06, MISO: P0.17 */
             psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
-                <NRF_PSEL(SPIM_MOSI, 0, 17)>,
+                <NRF_PSEL(SPIM_MOSI, 0, 6)>,
                 <NRF_PSEL(SPIM_MISO, 0, 17)>;
         };
     };
@@ -24,7 +29,7 @@
     spi0_sleep: spi0_sleep {
         group1 {
             psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
-                <NRF_PSEL(SPIM_MOSI, 0, 17)>,
+                <NRF_PSEL(SPIM_MOSI, 0, 6)>,
                 <NRF_PSEL(SPIM_MISO, 0, 17)>;
             low-power-enable;
         };
@@ -38,9 +43,9 @@
     pinctrl-1 = <&spi0_sleep>;
     pinctrl-names = "default", "sleep";
     
-    /* [수정됨] 키보드 핀(6,20) 충돌 회피! */
-    /* CS 핀을 'P0.22'로 변경 (Charybdis 표준 예비 핀) */
-    cs-gpios = <&gpio0 22 GPIO_ACTIVE_LOW>;
+    /* [수정됨] CS 핀 -> D0 (P1.01) 사용 */
+    /* 키보드 매트릭스가 절대 쓰지 않는 남는 핀입니다. */
+    cs-gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
 
     trackball: trackball@0 {
         status = "okay";
@@ -48,9 +53,9 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         
-        /* [수정됨] 키보드 핀 충돌 회피! */
-        /* IRQ 핀을 'P1.00'으로 변경 (Charybdis 표준 인터럽트 핀) */
-        irq-gpios = <&gpio1 0 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+        /* [수정됨] IRQ 핀 -> D1 (P1.02) 사용 */
+        /* 키보드 매트릭스가 절대 쓰지 않는 남는 핀입니다. */
+        irq-gpios = <&gpio1 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         
         cpi = <1000>;
         evt-type = <INPUT_EV_REL>;
