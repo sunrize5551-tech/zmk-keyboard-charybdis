@@ -1,6 +1,5 @@
-/* Gemini 3 Pro - Final Fix Version */
-/* 1. SPI 통신선 정상화 (MOSI/MISO 분리) */
-/* 2. 핀 충돌 완벽 해결 (D0, D1 사용) */
+/* Gemini 3 Pro - User Observation Version */
+/* 형님의 관측 결과 반영: NCS(2번핀), MOT(5번핀) */
 
 #define INPUT_EV_KEY 0x01
 #define INPUT_EV_REL 0x02
@@ -18,19 +17,20 @@
 &pinctrl {
     spi0_default: spi0_default {
         group1 {
-            /* [수정됨] SPI 핀 맵핑 정상화 (nice!nano v2 표준) */
-            /* SCK: P0.08, MOSI: P0.06, MISO: P0.17 */
-            psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
+            /* [SPI 통신선 재배치] */
+            /* SCK: 맨 아래 6번핀 (P0.20) */
+            /* MOSI: MOT가 5번을 차지했으므로, 남는 1번핀(P0.06)으로 이동 */
+            psels = <NRF_PSEL(SPIM_SCK, 0, 20)>,
                 <NRF_PSEL(SPIM_MOSI, 0, 6)>,
-                <NRF_PSEL(SPIM_MISO, 0, 17)>;
+                <NRF_PSEL(SPIM_MISO, 0, 6)>;
         };
     };
 
     spi0_sleep: spi0_sleep {
         group1 {
-            psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
+            psels = <NRF_PSEL(SPIM_SCK, 0, 20)>,
                 <NRF_PSEL(SPIM_MOSI, 0, 6)>,
-                <NRF_PSEL(SPIM_MISO, 0, 17)>;
+                <NRF_PSEL(SPIM_MISO, 0, 6)>;
             low-power-enable;
         };
     };
@@ -43,9 +43,8 @@
     pinctrl-1 = <&spi0_sleep>;
     pinctrl-names = "default", "sleep";
     
-    /* [수정됨] CS 핀 -> D0 (P1.01) 사용 */
-    /* 키보드 매트릭스가 절대 쓰지 않는 남는 핀입니다. */
-    cs-gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
+    /* [형님 관측] NCS(검은선) -> 위에서 2번째 핀 (P0.08) */
+    cs-gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
 
     trackball: trackball@0 {
         status = "okay";
@@ -53,9 +52,8 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         
-        /* [수정됨] IRQ 핀 -> D1 (P1.02) 사용 */
-        /* 키보드 매트릭스가 절대 쓰지 않는 남는 핀입니다. */
-        irq-gpios = <&gpio1 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+        /* [형님 관측] MOT(흰색선) -> 위에서 5번째 핀 (P0.17) */
+        irq-gpios = <&gpio0 17 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         
         cpi = <1000>;
         evt-type = <INPUT_EV_REL>;
