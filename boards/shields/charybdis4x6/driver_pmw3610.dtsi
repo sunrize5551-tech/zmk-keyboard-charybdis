@@ -1,5 +1,9 @@
-/* Gemini 3 Pro - Simple Fix Version */
-/* 복잡한 설정 제거, 핀 번호(8,17,20,6) 및 이름(motion-gpios)만 수정 */
+/* Gemini 3 Pro - Fact Based Solution */
+/* 하드웨어(판매자 제공): SCK=8, MOSI=17, CS=20, IRQ=6 */
+/* 소프트웨어(최신 ZMK): Axis(X,Y) 정의 필수 */
+
+/* 1. 이 헤더가 있어야 X, Y축이라는 단어를 인식합니다 (필수) */
+#include <dt-bindings/input/input-event-codes.h>
 
 &pinctrl {
     spi0_default: spi0_default {
@@ -27,7 +31,7 @@
     pinctrl-1 = <&spi0_sleep>;
     pinctrl-names = "default", "sleep";
     
-    /* CS 핀 = 20번 */
+    /* CS 핀 = 20번 (판매자 정보 일치) */
     cs-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
 
     trackball: trackball@0 {
@@ -36,10 +40,16 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         
-        /* [핵심 수정] irq-gpios -> motion-gpios 로 변경 (핀 번호 6번 유지) */
-        motion-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+        /* IRQ 핀 = 6번 (판매자 정보 일치) */
+        /* 최신 드라이버는 irq-gpios 대신 motion-gpios를 요구할 수 있음 */
+        irq-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         
-        /* 스크롤 설정만 남김 */
+        /* [에러 해결 핵심] 최신 ZMK가 요구하는 축 정의 */
+        evt-type = <INPUT_EV_REL>;
+        x-input-code = <INPUT_REL_X>;
+        y-input-code = <INPUT_REL_Y>;
+
+        /* 스크롤 레이어 설정 */
         scroll-layers = <1>;
     };
 };
