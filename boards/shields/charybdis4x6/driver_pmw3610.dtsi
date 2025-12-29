@@ -11,7 +11,54 @@
         };
     };
 
+    spi0_sleep: spi0_sleep {/* Gemini 3 Pro - Final Fix for New ZMK Version */
+/* 핀 번호는 판매자 정답(8, 17, 20, 6) 유지 + 최신 드라이버 문법 적용 */
+
+&pinctrl {
+    spi0_default: spi0_default {
+        group1 {
+            /* SCK=8, MOSI=17, MISO=17 (판매자 핀맵) */
+            psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
+                <NRF_PSEL(SPIM_MOSI, 0, 17)>,
+                <NRF_PSEL(SPIM_MISO, 0, 17)>;
+        };
+    };
+
     spi0_sleep: spi0_sleep {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
+                <NRF_PSEL(SPIM_MOSI, 0, 17)>,
+                <NRF_PSEL(SPIM_MISO, 0, 17)>;
+            low-power-enable;
+        };
+    };
+};
+
+&spi0 {
+    status = "okay";
+    compatible = "nordic,nrf-spim";
+    pinctrl-0 = <&spi0_default>;
+    pinctrl-1 = <&spi0_sleep>;
+    pinctrl-names = "default", "sleep";
+    
+    /* CS 핀 = 20번 */
+    cs-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
+
+    trackball: trackball@0 {
+        status = "okay";
+        compatible = "pixart,pmw3610";
+        reg = <0>;
+        spi-max-frequency = <2000000>;
+        
+        /* [중요 수정] 최신 ZMK는 irq-gpios 대신 motion-gpios를 씁니다 */
+        /* 핀 번호는 6번 그대로 유지 */
+        motion-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+        
+        /* 스크롤 설정 */
+        scroll-layers = <1>;
+    };
+};
+
         group1 {
             psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
                 <NRF_PSEL(SPIM_MOSI, 0, 17)>,
