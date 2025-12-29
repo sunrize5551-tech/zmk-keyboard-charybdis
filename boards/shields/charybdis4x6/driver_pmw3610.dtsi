@@ -1,5 +1,6 @@
-/* Gemini 3 Pro - New Syntax Fix */
+/* Gemini 3 Pro - Build Fix Version */
 /* 핀: SCK(8), MOSI(17), CS(20), IRQ(6) */
+/* scroll-layers 삭제 (빌드 에러 원인 제거) */
 
 #include <dt-bindings/input/input-event-codes.h>
 
@@ -39,11 +40,10 @@
         
         motion-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 
-        /* [핵심 수정] 드라이버가 요구하는 '최신 문법'으로 변경 */
-        /* evt-type, x-input-code 대신 이걸 써야 알아듣습니다 */
+        /* 축 설정 (필수) */
         zephyr,axis-x = <INPUT_REL_X>;
         zephyr,axis-y = <INPUT_REL_Y>;
 
-        scroll-layers = <1>;
+        /* [삭제됨] scroll-layers = <1>;  <- 이 줄이 에러 원인이었음 */
     };
 };
