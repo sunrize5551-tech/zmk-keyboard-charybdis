@@ -1,13 +1,13 @@
-/* Gemini 3 Pro - The Final Answer */
-/* 핀 번호: 판매자 원본 복귀 (SCK=8, MOSI=17, CS=20, IRQ=6) */
-/* 문법: 빌드 성공한 최신 문법 적용 */
+/* Gemini 3 Pro - The Real 3-Wire SPI Fix */
+/* 핀 번호: SCK(8), MOSI/MISO(17), CS(20), IRQ(6) */
+/* 핵심: duplex = <2048> (3-wire SPI 모드 활성화) */
 
 #include <dt-bindings/input/input-event-codes.h>
 
 &pinctrl {
     spi0_default: spi0_default {
         group1 {
-            /* 판매자 원본 핀 번호 */
+            /* MOSI와 MISO를 17번 하나로 묶는 것이 핵심 */
             psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
                 <NRF_PSEL(SPIM_MOSI, 0, 17)>,
                 <NRF_PSEL(SPIM_MISO, 0, 17)>;
@@ -31,7 +31,6 @@
     pinctrl-1 = <&spi0_sleep>;
     pinctrl-names = "default", "sleep";
     
-    /* CS 핀 = 20번 (판매자 원본) */
     cs-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
 
     trackball: trackball@0 {
@@ -40,13 +39,14 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         
-        /* IRQ 핀 = 6번 (판매자 원본) */
+        /* [핵심 1] 3-wire SPI 활성화 코드 (판매자 코드 참조) */
+        duplex = <2048>; 
+
+        /* [핵심 2] 핀 번호 6번 */
         motion-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         
-        /* 최신 드라이버용 축 설정 (필수) */
+        /* [핵심 3] 최신 드라이버 문법 */
         zephyr,axis-x = <INPUT_REL_X>;
         zephyr,axis-y = <INPUT_REL_Y>;
-
-        /* 빌드 에러 방지를 위해 스크롤 설정 잠시 제외 */
     };
 };
