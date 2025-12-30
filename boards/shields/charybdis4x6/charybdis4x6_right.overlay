@@ -1,5 +1,4 @@
 #include "charybdis4x6.dtsi"
-/* 아래 줄 추가: 마우스 입력 코드를 쓰기 위한 필수 헤더 */
 #include <dt-bindings/zmk/input_transform.h>
 
 &default_transform {
@@ -7,7 +6,6 @@
 };
 
 &kscan0 {
-    /* 핀맵 유지 */
     col-gpios
         = <&pro_micro 8 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
         , <&pro_micro 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
@@ -51,10 +49,8 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         
-        /* 1. 최신 문법 (IRQ -> Motion) */
         motion-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 
-        /* 2. 필수 신분증 추가 (이게 없어서 에러 났음) */
         evt-type = <INPUT_EV_REL>;
         x-input-code = <INPUT_REL_X>;
         y-input-code = <INPUT_REL_Y>;
