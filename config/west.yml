@@ -7,7 +7,7 @@ manifest:
   projects:
     - name: zmk
       remote: zmkfirmware
-      revision: zephyr-3.5
+      revision: v3.5.0+zmk-fixes
       import: app/west.yml
     - name: zmk-pmw3610-driver
       remote: badjeff
