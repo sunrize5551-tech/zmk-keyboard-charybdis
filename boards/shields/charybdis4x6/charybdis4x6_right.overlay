@@ -1,4 +1,6 @@
 #include "charybdis4x6.dtsi"
+/* 1. 아래 줄 필수 추가: 입력 코드 정의를 불러옵니다 */
+#include <dt-bindings/zmk/input_transform.h>
 
 &default_transform {
     col-offset = <6>;
@@ -48,11 +50,12 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         
-        /* 
-           중요: Mini 펌웨어에서 작동했던 그 핀(6번)입니다.
-           최신 ZMK 문법인 motion-gpios를 씁니다.
-        */
         motion-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+
+        /* 2. 아래 3줄 필수 추가: 마우스라고 명찰 달아주기 */
+        evt-type = <INPUT_EV_REL>;
+        x-input-code = <INPUT_REL_X>;
+        y-input-code = <INPUT_REL_Y>;
     };
 };
 
