@@ -1,5 +1,5 @@
 #include "charybdis4x6.dtsi"
-/* 1. 아래 줄 필수 추가: 입력 코드 정의를 불러옵니다 */
+/* 아래 줄이 없으면 에러 납니다! 꼭 확인하세요 */
 #include <dt-bindings/zmk/input_transform.h>
 
 &default_transform {
@@ -52,7 +52,7 @@
         
         motion-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 
-        /* 2. 아래 3줄 필수 추가: 마우스라고 명찰 달아주기 */
+        /* 필수 입력 코드 */
         evt-type = <INPUT_EV_REL>;
         x-input-code = <INPUT_REL_X>;
         y-input-code = <INPUT_REL_Y>;
