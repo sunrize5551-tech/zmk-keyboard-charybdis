@@ -1,3 +1,4 @@
+/* charybdis_right.overlay for Inorichi Driver */
 #include "charybdis4x6.dtsi"
 
 &default_transform {
@@ -5,7 +6,7 @@
 };
 
 &kscan0 {
-    /* Build #33에서 검증된 키 매트릭스 핀 (절대 수정 금지) */
+    /* Build #33 검증 핀맵 (수정 금지) */
     col-gpios
         = <&pro_micro 8 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
         , <&pro_micro 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
@@ -16,13 +17,13 @@
         ;
 };
 
-/* Inorichi 드라이버용 3-wire SPI 설정 */
+/* 3-wire SPI 설정을 위한 핀 컨트롤 (Inorichi 방식) */
 &pinctrl {
     spi0_default: spi0_default {
         group1 {
             psels = <NRF_PSEL(SPIM_SCK, 0, 8)>,
                 <NRF_PSEL(SPIM_MOSI, 0, 17)>,
-                <NRF_PSEL(SPIM_MISO, 0, 17)>;
+                <NRF_PSEL(SPIM_MISO, 0, 17)>; /* 17번 핀 공유 = 3-wire */
         };
     };
 
@@ -36,12 +37,15 @@
     };
 };
 
+/* SPI 버스 및 트랙볼 정의 */
 &spi0 {
     status = "okay";
     compatible = "nordic,nrf-spim";
     pinctrl-0 = <&spi0_default>;
     pinctrl-1 = <&spi0_sleep>;
     pinctrl-names = "default", "sleep";
+    
+    /* Inorichi 드라이버가 직접 제어할 CS 핀 */
     cs-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
 
     trackball: trackball@0 {
@@ -50,15 +54,15 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         
-        /* Inorichi 필수 설정: irq-gpios */
+        /* Inorichi 필수: IRQ 핀 설정 (6번) */
         irq-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         
-        /* 옵션: 레이어 1번, 2번 등에서 스크롤 모드 작동 (필요 없으면 삭제 가능) */
-        // scroll-layers = <1>; 
+        /* 스크롤 레이어 (선택 사항: 레이어 1, 2, 3에서 스크롤 작동) */
+        // scroll-layers = <1 2 3>;
     };
 };
 
-/* 트랙볼 입력을 시스템에 연결 */
+/* 입력 리스너 연결 */
 / {
   trackball_listener {
     compatible = "zmk,input-listener";
