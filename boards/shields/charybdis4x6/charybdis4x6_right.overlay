@@ -45,18 +45,15 @@
 
     trackball: trackball@0 {
         status = "okay";
-        compatible = "pixart,pmw3610";
+        compatible = "pixart,pmw3610"; /* ZMK 순정 드라이버 */
         reg = <0>;
         spi-max-frequency = <2000000>;
         
-        /* Badjeff + ZMK 3.5 조합은 이 문법이 맞습니다 */
+        /* ZMK 순정은 irq-gpios를 사용합니다 */
         irq-gpios = <&gpio0 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         
-        /* Badjeff 전용: 감도 설정 */
-        cpi = <600>;
-        evt-type = <INPUT_EV_REL>;
-        x-input-code = <INPUT_REL_X>;
-        y-input-code = <INPUT_REL_Y>;
+        /* 스크롤 기능 (필요하면 숫자 변경) */
+        scroll-layers = <1>;
     };
 };
 
